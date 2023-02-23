@@ -24,17 +24,20 @@ def random_id(n=16):
     """
     Generates a random n-byte ID
     """
-    pass
-
+    return os.urandom(n)
 
 
 # id, implant_id, username, hostname 
 @dataclass
 class Implant(db.Model):
     # todo: might be nice to have first seen, last seen, ..etc
-    pass
+    id  = db.Column(db.Integer, primary_key=True)
+    implant_id: str  = db.Column(db.String)
+    username: str = db.Column(db.String)
+    hostname: str = db.Column(db.String)
 
-     
+
+ 
     
 
 CREATED = "CREATED"
@@ -46,6 +49,39 @@ ERROR = "ERROR"
 # id, task_id, implant_id, opcode, args, status
 @dataclass
 class Task(db.Model):
-    pass 
+    id  = db.Column(db.Integer, primary_key=True)
+    task_id: str  = db.Column(db.String)
+    implant_id: str  = db.Column(db.String)
+    opcode : int = db.Column(db.Integer)
+    args : str = db.Column(db.String)
+    status: str = db.Column(db.String)
     
    
+
+## crud operations 
+## maybe move into own file 
+
+def random_id(n=16):
+    """
+    Generates a random n-byte ID
+    """
+    return os.urandom(n)
+
+
+def make_task(implant_id: str, opcode:int, args:str)->Task:
+    #todo ensure the implant id exists!!
+    #todo: use logggin instead of print!
+    #todo: add validation!
+    t = Task(
+        implant_id = implant_id, 
+        task_id = random_id().hex(),
+        opcode = opcode, 
+        args = args, 
+        status = CREATED
+    )
+    print(f"New task created for {t.implant_id} :{t.task_id} " )
+    return t
+
+def make_implant(implant_id: str, username:str, hostname: str):
+    im =Implant(implant_id = implant_id, username = username, hostname=hostname)
+    return im

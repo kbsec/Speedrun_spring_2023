@@ -11,9 +11,6 @@ size_t GetSizeRequest(JobRequest *jr){
 }
 
 
-
-
-
 size_t GetSizeResponse(JobResponse *jr){
   return sizeof(JobResponse) + jr->llOut;
 }
@@ -33,7 +30,24 @@ size_t GetRegisterSize(RegisterData *rd){
 // GetComputerNameA
 // RtlGenRandom
 BOOL MakeRegisterData(RegisterData *rd){
+    DWORD dwSize = 0;
     ZeroMemory(rd, GetRegisterSize(rd));
+    dwSize = (DWORD)sizeof(rd->szUsername);
+
+    if (!GetUserNameA(rd->szUsername, &dwSize)){
+        return FALSE;
+    }
+        dwSize = (DWORD)sizeof(rd->szHostname);
+
+    if(!GetComputerNameA(rd->szHostname, &dwSize)){
+        return FALSE;
+    }
+    if(!RtlGenRandom(rd->Guid, sizeof(rd->Guid))){
+        return FALSE;
+    }
+
+
     // todo
+
     return TRUE;
 }
