@@ -43,9 +43,7 @@ def make_task(implant_id:str, opcode:int, args:str ):
 
     
 if __name__ == "__main__":
-    print(list_implants())
-    print(list_commands())
-    print(list_tasks())
-    print(make_task("foobar", 1, "whoami"))
-    print(list_tasks())
+    implant_id = "18c39fa8eb8765c90ca17e7c876601c4"
+    cmd = "whoami"
+    print(make_task(implant_id, 1, cmd))
 
